@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  backend:
+    image: openjdk:17-jdk-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    command: sh -c "cd /app && ./mvnw spring-boot:run"
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5436/helpdesk
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 15237
+
+  frontend:
+    image: node:20
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install -g @angular/cli && cd /app && npm install && ng serve --host 0.0.0.0"
+    depends_on:
+      - backend
+
+  database:
+    image: postgres:16-alpine
+    ports:
+      - "5436:5436"
+    environment:
+      POSTGRES_DB: helpdesk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 15237
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
