@@ -21,7 +21,7 @@ services:
       - "4200:4200"
     volumes:
       - ./frontend:/app
-    command: sh -c "npm install -g @angular/cli && cd /app && npm install && ng serve --host 0.0.0.0"
+    command: sh -c "npm install -g @angular/cli && cd /app && npm install && ng serve --host 0.0.0.0 --proxy-config proxy.conf.json"
     depends_on:
       - backend
 
