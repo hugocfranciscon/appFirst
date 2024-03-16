@@ -13,7 +13,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/helpdesk
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 15237
-    command: sh -c "cd /app && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev"
+    command: sh -c "cd /app && ./gradlew bootRun -Dspring.profiles.active=dev"
 
   frontend:
     image: node:20
@@ -21,7 +21,7 @@ services:
       - "4200:4200"
     volumes:
       - ./frontend:/app
-    command: sh -c "npm install -g @angular/cli && cd /app && npm install && ng serve --host 0.0.0.0 --proxy-config proxy.conf.json"
+    command: sh -c "npm install -g @angular/cli && cd /app && npm install && ng serve --host 0.0.0.0"
     depends_on:
       - backend
 
