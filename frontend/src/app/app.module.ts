@@ -6,27 +6,25 @@ import { AppComponent } from './app.component';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { OAuthModule, OAuthStorage } from 'angular-oauth2-oidc';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { LoginComponent } from './components/login/login.component';
+import { TicketComponent } from './components/ticket/ticket.component';
+import { TicketsComponent } from './components/tickets/tickets.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    TicketComponent,
+    TicketsComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule,
-    OAuthModule.forRoot({
-      resourceServer: {
-        sendAccessToken: true,
-        allowedUrls: ['http://localhost:8080'],
-      },
-  })
+    HttpClientModule
   ],
   providers: [
-    { provide: OAuthStorage, useValue: localStorage },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

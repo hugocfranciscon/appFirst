@@ -1,0 +1,20 @@
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand">Chamado</a>
+  </div>
+</nav>
+<div class="container">
+  <div class="mb-3">
+    <label for="identification" class="form-label">Identificação</label>
+    <input type="text" class="form-control" id="identification">
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Descrição</label>
+    <textarea class="form-control" id="description" rows="3"></textarea>
+  </div>
+  <div class="text-end">
+    <button type="button" class="btn btn-primary m-1">Confirmar</button>
+    <button type="button" class="btn btn-danger m-1" (click)="cancel()">Cancelar</button>
+  </div>
+
+</div>

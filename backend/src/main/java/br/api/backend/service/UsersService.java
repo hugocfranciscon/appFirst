@@ -19,6 +19,10 @@ public class UsersService {
     public Users getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
+    
+    public Users getUserByUsernameAndPassword(String user, String pass) {
+        return userRepository.findByUsernameAndPassword(user, pass);
+    }
 
     public Users saveUser(Users user) {
         return userRepository.save(user);

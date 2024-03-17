@@ -1,10 +1,3 @@
-<div class="container" >
-  <button *ngIf="!isLoggedIn" class="btn btn-primary" (click)="login()" type="submit">
-    Login</button>
-  <div *ngIf="isLoggedIn" class="content">
-    <span>Welcome !!</span>    
-    <br/>
-  </div>
-  <button class="btn btn-primary" (click)="consultar()">
-    Consultar</button>
+<div>
+  <router-outlet></router-outlet>
 </div>
