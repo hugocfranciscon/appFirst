@@ -5,15 +5,15 @@
 </nav>
 <div class="container">
   <div class="mb-3">
-    <label for="identification" class="form-label">Identificação</label>
-    <input type="text" class="form-control" id="identification">
+    <label for="subject" class="form-label">Assunto</label>
+    <input type="text" class="form-control" id="subject" [(ngModel)]="subject">
   </div>
   <div class="mb-3">
     <label for="description" class="form-label">Descrição</label>
-    <textarea class="form-control" id="description" rows="3"></textarea>
+    <textarea class="form-control" id="description" rows="3" [(ngModel)]="description"></textarea>
   </div>
   <div class="text-end">
-    <button type="button" class="btn btn-primary m-1">Confirmar</button>
+    <button type="button" class="btn btn-primary m-1" (click)="newTicket()">Confirmar</button>
     <button type="button" class="btn btn-danger m-1" (click)="cancel()">Cancelar</button>
   </div>
 

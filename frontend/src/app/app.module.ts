@@ -10,6 +10,7 @@ import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { LoginComponent } from './components/login/login.component';
 import { TicketComponent } from './components/ticket/ticket.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { TicketsComponent } from './components/tickets/tickets.component';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NgbModule
   ],
   providers: [
     {

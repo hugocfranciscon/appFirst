@@ -2,10 +2,42 @@
   <div class="container-fluid">
     <a class="navbar-brand">Chamados</a>
     <form class="d-flex">        
-      <button class="btn btn-success" type="submit" (click)="newTicket()">Novo Chamado</button>
-      <button class="btn btn-danger" (click)="exit()">Sair</button>
+      <button class="btn btn-success m-1" type="submit" (click)="newTicket()">Novo Chamado</button>
+      <button class="btn btn-danger m-1" (click)="exit()">Sair</button>
     </form>
   </div>
 </nav>
 <div class="container">
+    <div [hidden]="loading">
+      <table class="table table-sm table-hover col-sm-12">
+          <thead>
+              <tr>
+                  <th>#</th>
+                  <th class="col-sm-2">Identificação</th>
+                  <th class="col-sm-3">Descrição</th>
+                  <th class="col-sm-2">Status</th>
+                  <th class="col-sm-2">Classificação</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr class="align-middle" *ngFor="let u of tickets(); index as i">
+                  <td>
+                      <button class="btn btn-sm btn-success me-1" (click)="closeTicket(u)">
+                          Fechar Chamado
+                      </button>
+                  </td>
+                  <td>{{ u.subject }}</td>
+                  <td>{{ u.description }}</td>
+                  <td>{{ u.status }}</td>
+                  <td>
+
+
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+  <div class="flex-center">
+      <ngb-pagination [collectionSize]="totalItens" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
+  </div>  
 </div>

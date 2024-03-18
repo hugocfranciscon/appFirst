@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    const url = 'http://localhost:8080/auth/token';
+    const url = environment.url+'auth/token';
     const body = {
       user: this.user,
       pass: this.pass,
@@ -28,9 +29,9 @@ export class LoginComponent implements OnInit {
     this.http.post(url, body, {observe: 'response'}).subscribe({
       next: (response: any) => {
         if (response.status === 200) {
-          const token = response.body.token;
-          console.log(token);
-          sessionStorage.setItem('token', token);
+          sessionStorage.setItem('token', response.body.token);
+          sessionStorage.setItem('userId', response.body.userId);
+          sessionStorage.setItem('type', response.body.type);
           this.router.navigate(['/tickets']);
         }
       },
