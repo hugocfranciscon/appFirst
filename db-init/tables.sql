@@ -10,7 +10,11 @@ CREATE TABLE IF NOT EXISTS tickets (
     user_id INT NOT NULL,
     subject VARCHAR(255) NOT NULL,
     description TEXT,
-    status VARCHAR(20) DEFAULT 'OPEN',
+    status VARCHAR(20) DEFAULT 'OPEN',    
+    rating INT,
+    rating_description VARCHAR(255),
+    closing_description VARCHAR(255),
+    closing_user_id INT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

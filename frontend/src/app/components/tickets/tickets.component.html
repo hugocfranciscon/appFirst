@@ -20,7 +20,7 @@
               </tr>
           </thead>
           <tbody>
-              <tr class="align-middle" *ngFor="let u of tickets(); index as i">
+              <tr class="align-middle" *ngFor="let u of tickets; index as i">
                   <td>
                       <button class="btn btn-sm btn-success me-1" (click)="closeTicket(u)">
                           Fechar Chamado
@@ -30,14 +30,19 @@
                   <td>{{ u.description }}</td>
                   <td>{{ u.status }}</td>
                   <td>
-
-
+                    <div>
+                      <i class="ms-1 bi bi-star{{ u.rating <= 1 ? '-fill' : '' }} cursor-pointer"></i>
+                      <i class="ms-1 bi bi-star{{ u.rating <= 2 ? '-fill' : '' }} cursor-pointer"></i>
+                      <i class="ms-1 bi bi-star{{ u.rating <= 3 ? '-fill' : '' }} cursor-pointer"></i>
+                      <i class="ms-1 bi bi-star{{ u.rating <= 4 ? '-fill' : '' }} cursor-pointer"></i>
+                      <i class="ms-1 bi bi-star{{ u.rating <= 5 ? '-fill' : '' }} cursor-pointer"></i>
+                    </div>
                   </td>
               </tr>
           </tbody>
       </table>
   </div>
   <div class="flex-center">
-      <ngb-pagination [collectionSize]="totalItens" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
+      <ngb-pagination [collectionSize]="totalElements" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
   </div>  
 </div>

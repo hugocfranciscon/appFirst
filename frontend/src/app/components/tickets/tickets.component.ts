@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-tickets',
@@ -15,9 +17,14 @@ export class TicketsComponent implements OnInit {
   public loading: boolean = false;
   public page: number = 1;
   public pageSize: number = 10;
-  public totalItens: number = 0;
+  public totalElements: number = 0;
+  public totalPages: number = 0;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private toast: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.typeUser = window.sessionStorage.getItem('typeUser')!;
@@ -35,13 +42,14 @@ export class TicketsComponent implements OnInit {
     this.removeCredentials();
   }
 
-  loadTickets() {
-    const url = environment.url+'api/tickets/findByUser/'+sessionStorage.getItem('userId');
+  loadTickets(page: number = 0, size: number = 10) {
+    const userId = sessionStorage.getItem('userId');
+    const url = `${environment.url}api/tickets/findByUser/${userId}?page=${page}&size=${size}`;    
     this.http.get(url).subscribe({
-      next: (response: any) => {
-        if (response.status === 200) {
-
-        }
+      next: (response: any) => {        
+        this.tickets = response.content;
+        this.totalPages = response.totalPages;
+        this.totalElements = response.totalElements;
       },
       error: (error) => {
         if (error.status === 403) {
@@ -53,6 +61,25 @@ export class TicketsComponent implements OnInit {
       }
     });    
   }
+
+  updateTicketRating(ticket: any, rating: number, ratingDescription: string = ""): void {
+    const url = `${environment.url}api/tickets/${ticket.id}/rating`;
+    const body = { rating, ratingDescription };  
+    this.http.patch(url, body).subscribe({
+      next: (response: any) => {      
+        this.toast.success('Ticket atualizado com sucesso', response);      
+      },
+      error: (error) => {      
+        if (error.status === 403) {
+          this.toast.danger('Não autorizado');
+          this.removeCredentials();
+        } else {        
+          this.toast.danger('Erro ao atualizar o ticket', error);
+        }
+      }
+    });
+  }
+
 
   closeTicket(t: any) {
 
