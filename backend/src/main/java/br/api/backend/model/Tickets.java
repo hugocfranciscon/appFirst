@@ -33,7 +33,8 @@ public class Tickets {
     @Column(nullable = false)
     private String status = "OPEN";    
     
-    private int rating;
+    @Column(nullable = false)
+    private int rating = 0;
     
     @Column(columnDefinition = "TEXT")
     private String ratingDescription;

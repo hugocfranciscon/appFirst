@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -12,6 +12,12 @@ import { ToastService } from '../../services/toast.service';
 })
 export class TicketsComponent implements OnInit {
 
+  @ViewChild('modalCloseTicket') modalCloseTicket: ElementRef | undefined;
+  @ViewChild('modalRating') modalRating: ElementRef | undefined;
+  @ViewChild('modalNewTicket') modalNewTicket: ElementRef | undefined;
+  @ViewChild('modalConsultingTicket') modalConsultingTicket: ElementRef | undefined;
+  
+  public ticketSelected: any = {};
   public tickets: any = [];
   public typeUser: string = "A";
   public loading: boolean = false;
@@ -19,11 +25,18 @@ export class TicketsComponent implements OnInit {
   public pageSize: number = 10;
   public totalElements: number = 0;
   public totalPages: number = 0;
+  public filter: string = "";
+  public descriptionClosing: string = "";
+  public rating: number = 0;
+  public descriptionRating: string = "";
+  public subject: string = "";
+  public description: string = "";
 
   constructor(
     private router: Router, 
     private http: HttpClient,
-    private toast: ToastService
+    private toast: ToastService,
+    public modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +45,9 @@ export class TicketsComponent implements OnInit {
   }
 
   newTicket() {
-    this.router.navigate(['/ticket']);
+    this.subject = "";
+    this.description = "";    
+    this.modalService.open(this.modalNewTicket);
   }
 
   exit() {
@@ -80,13 +95,81 @@ export class TicketsComponent implements OnInit {
     });
   }
 
-
   closeTicket(t: any) {
+    this.ticketSelected = t;
+    this.descriptionClosing = "";
+    this.modalService.open(this.modalCloseTicket);
+  }
 
+  ratingTicket(t: any) {
+    this.ticketSelected = t;
+    this.rating = 0;
+    this.descriptionRating = "";
+    this.modalService.open(this.modalRating);
   }
 
   removeCredentials() {
     sessionStorage.removeItem('token');
-    this.router.navigate(['/login']);    
+    this.router.navigate(['/login']);
   }
+
+  exitModal() {
+    this.modalService.dismissAll();
+  }
+
+  filtering() {
+
+  }
+
+  confirmClosing() {
+
+  }
+
+  confirmRating() {
+
+  }
+
+  confirmTicket() {
+
+    if (this.subject == "") {
+      this.toast.danger('Informe o assunto do chamado.');
+      return;
+    }
+    if (this.description == "") {
+      this.toast.danger('Informe a descrição do chamado.');
+      return;
+    }
+    const url = environment.url+'api/tickets/create';
+    const body = {
+      userId: sessionStorage.getItem('userId'),
+      subject: this.subject,
+      description: this.description,
+    };
+
+    this.http.post(url, body, {observe: 'response'}).subscribe({
+      next: (response: any) => {
+        if (response.status === 200) {
+          if (response.body.status == 'ok') {
+            this.toast.success("Chamado cadastrado com sucesso.");
+            this.router.navigate(['/tickets']);
+          }
+        }
+      },
+      error: (error) => {
+        if (error.status === 403) {
+          alert('Não autorizado');
+          sessionStorage.removeItem('token');
+          this.router.navigate(['/login']);
+        } else {
+          console.error(error);
+        }
+      }
+    });
+  }
+
+  consultingTicket(t: any) {
+
+    this.modalService.open(this.modalConsultingTicket);
+  }
+
 }

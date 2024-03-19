@@ -8,7 +8,6 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { LoginComponent } from './components/login/login.component';
-import { TicketComponent } from './components/ticket/ticket.component';
 import { TicketsComponent } from './components/tickets/tickets.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +16,6 @@ import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
   declarations: [
     AppComponent,
     LoginComponent,
-    TicketComponent,
     TicketsComponent
   ],
   imports: [

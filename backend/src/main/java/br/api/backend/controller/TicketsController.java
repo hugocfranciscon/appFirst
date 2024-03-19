@@ -69,7 +69,6 @@ public class TicketsController {
             Tickets updatedTicket = ticketsService.updateRating(ticketId, rating, ratingDescription);
             return ResponseEntity.ok(updatedTicket);
         } catch (Exception e) {
-            // Implemente uma melhor gestão de exceções conforme necessário
             return ResponseEntity.badRequest().build();
         }
     }

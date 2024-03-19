@@ -7,42 +7,160 @@
     </form>
   </div>
 </nav>
-<div class="container">
-    <div [hidden]="loading">
-      <table class="table table-sm table-hover col-sm-12">
-          <thead>
-              <tr>
-                  <th>#</th>
-                  <th class="col-sm-2">Identificação</th>
-                  <th class="col-sm-3">Descrição</th>
-                  <th class="col-sm-2">Status</th>
-                  <th class="col-sm-2">Classificação</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr class="align-middle" *ngFor="let u of tickets; index as i">
-                  <td>
-                      <button class="btn btn-sm btn-success me-1" (click)="closeTicket(u)">
-                          Fechar Chamado
-                      </button>
-                  </td>
-                  <td>{{ u.subject }}</td>
-                  <td>{{ u.description }}</td>
-                  <td>{{ u.status }}</td>
-                  <td>
-                    <div>
-                      <i class="ms-1 bi bi-star{{ u.rating <= 1 ? '-fill' : '' }} cursor-pointer"></i>
-                      <i class="ms-1 bi bi-star{{ u.rating <= 2 ? '-fill' : '' }} cursor-pointer"></i>
-                      <i class="ms-1 bi bi-star{{ u.rating <= 3 ? '-fill' : '' }} cursor-pointer"></i>
-                      <i class="ms-1 bi bi-star{{ u.rating <= 4 ? '-fill' : '' }} cursor-pointer"></i>
-                      <i class="ms-1 bi bi-star{{ u.rating <= 5 ? '-fill' : '' }} cursor-pointer"></i>
-                    </div>
-                  </td>
-              </tr>
-          </tbody>
-      </table>
-  </div>
-  <div class="flex-center">
-      <ngb-pagination [collectionSize]="totalElements" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
+<div class="m-1">
+  <div class="container">
+    <div class="row">      
+      <div class="col-sm-6">
+        <div class="mb-3">              
+          <input type="text" class="form-control" id="filter" [(ngModel)]="filter" placeholder="Pesquisa">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" (click)="filtering()">Pesquisar</button>
+      </div>
+      <div class="col-sm-4 text-end">
+          <ngb-pagination [collectionSize]="totalElements" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
+      </div>
+    </div>
   </div>  
+  <div [hidden]="loading">
+    <table class="table table-sm table-hover col-sm-12">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th class="col-sm-1">Id</th>
+                <th class="col-sm-2">Identificação</th>
+                <th class="col-sm-3">Descrição</th>
+                <th class="col-sm-2">Status</th>
+                <th class="col-sm-2">Classificação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="align-middle" *ngFor="let t of tickets; index as i">
+                <td>
+                  <button class="btn btn-sm btn-success me-1 btn-grid" (click)="closeTicket(t)">
+                    Fechar Chamado
+                  </button>
+                  <button class="btn btn-sm btn-info me-1 btn-grid" (click)="consultingTicket(t)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
+                <td>{{ t.id }}</td>
+                <td>{{ t.subject }}</td>
+                <td>{{ t.description }}</td>
+                <td>{{ t.status }}</td>
+                <td>
+                  <div (click)="ratingTicket(t)">
+                    <i class="ms-1 bi bi-star{{ t.rating <= 1 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating <= 2 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating <= 3 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating <= 4 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating <= 5 ? '-fill' : '' }} cursor-pointer"></i>
+                  </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
 </div>
+<ng-template #modalCloseTicket let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Fechar Chamado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea class="form-control" id="description" rows="3" [(ngModel)]="descriptionClosing"></textarea>
+    </div>
+    <div class="text-end">
+      <button type="button" class="btn btn-primary m-1" (click)="confirmClosing()">Confirmar</button>
+      <button type="button" class="btn btn-danger m-1" (click)="exitModal()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #modalRating let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Avaliar Chamado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3 text-center">
+
+      <ngb-rating [(rate)]="rating">
+        <ng-template let-fill="fill" let-index="index">
+          <i class="rating bi-star{{ fill === 100 ? '-fill' : '' }}" [class.filled]="fill === 100" [class.low]="index < 3"></i>
+        </ng-template>
+      </ngb-rating>
+
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Deixe sua opinião</label>
+      <textarea class="form-control" id="description" rows="3" [(ngModel)]="descriptionRating"></textarea>
+    </div>
+    <div class="text-end">
+      <button type="button" class="btn btn-primary m-1" (click)="confirmRating()">Confirmar</button>
+      <button type="button" class="btn btn-danger m-1" (click)="exitModal()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #modalNewTicket let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Avaliar Chamado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">    
+      <label for="subject" class="form-label">Assunto</label>
+      <input type="text" class="form-control" id="subject" [(ngModel)]="subject">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea class="form-control" id="description" rows="3" [(ngModel)]="description"></textarea>
+    </div>
+    <div class="text-end">
+      <button type="button" class="btn btn-primary m-1" (click)="confirmTicket()">Confirmar</button>
+      <button type="button" class="btn btn-danger m-1" (click)="exitModal()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #modalConsultingTicket let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Consulta de Chamado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">    
+      <label for="subject" class="form-label">Assunto</label>
+      <input type="text" class="form-control" id="subject" [(ngModel)]="subject">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="description"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Resolução</label>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="descriptionClosing"></textarea>
+    </div>
+    <div class="mb-3 text-center">
+      <ngb-rating [(rate)]="rating">
+        <ng-template let-fill="fill" let-index="index">
+          <i class="rating bi-star{{ fill === 100 ? '-fill' : '' }}" [class.filled]="fill === 100" [class.low]="index < 3"></i>
+        </ng-template>
+      </ngb-rating>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Comentário da Avaliação</label>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="descriptionRating"></textarea>
+    </div>
+  </div>
+</ng-template>
+
