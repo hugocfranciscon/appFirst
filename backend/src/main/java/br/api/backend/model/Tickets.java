@@ -31,10 +31,9 @@ public class Tickets {
     private String description;
 
     @Column(nullable = false)
-    private String status = "OPEN";    
+    private String status = "OPEN";
     
-    @Column(nullable = false)
-    private int rating = 0;
+    private int rating;
     
     @Column(columnDefinition = "TEXT")
     private String ratingDescription;
@@ -43,12 +42,17 @@ public class Tickets {
     private String closingDescription;
     
     @ManyToOne
-    @JoinColumn(name = "closing_user_id", nullable = false)
+    @JoinColumn(name = "closing_user_id")
     private Users closingUser;
     
     public void updateRating(int rating, String ratingDescription) {
         this.rating = rating;
         this.ratingDescription = ratingDescription;
+    }
+    
+    public void updateClosing(Users user, String closingDescription) {
+        this.closingUser = user;
+        this.closingDescription = closingDescription;
     }
     
 }

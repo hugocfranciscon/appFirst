@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <a class="navbar-brand">Chamados</a>
     <form class="d-flex">        
-      <button class="btn btn-success m-1" type="submit" (click)="newTicket()">Novo Chamado</button>
+      <button class="btn btn-success m-1" type="submit" (click)="newTicket()" *ngIf="typeUser=='I'">Novo Chamado</button>
       <button class="btn btn-danger m-1" (click)="exit()">Sair</button>
     </form>
   </div>
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="col-sm-2">
-        <button type="button" class="btn btn-primary" (click)="filtering()">Pesquisar</button>
+        <button type="button" class="btn btn-primary" (click)="loadTickets()">Pesquisar</button>
       </div>
       <div class="col-sm-4 text-end">
           <ngb-pagination [collectionSize]="totalElements" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
@@ -38,7 +38,7 @@
         <tbody>
             <tr class="align-middle" *ngFor="let t of tickets; index as i">
                 <td>
-                  <button class="btn btn-sm btn-success me-1 btn-grid" (click)="closeTicket(t)">
+                  <button class="btn btn-sm btn-success me-1 btn-grid" (click)="closeTicket(t)" *ngIf="typeUser=='A'">
                     Fechar Chamado
                   </button>
                   <button class="btn btn-sm btn-info me-1 btn-grid" (click)="consultingTicket(t)">
@@ -51,11 +51,11 @@
                 <td>{{ t.status }}</td>
                 <td>
                   <div (click)="ratingTicket(t)">
-                    <i class="ms-1 bi bi-star{{ t.rating <= 1 ? '-fill' : '' }} cursor-pointer"></i>
-                    <i class="ms-1 bi bi-star{{ t.rating <= 2 ? '-fill' : '' }} cursor-pointer"></i>
-                    <i class="ms-1 bi bi-star{{ t.rating <= 3 ? '-fill' : '' }} cursor-pointer"></i>
-                    <i class="ms-1 bi bi-star{{ t.rating <= 4 ? '-fill' : '' }} cursor-pointer"></i>
-                    <i class="ms-1 bi bi-star{{ t.rating <= 5 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating >= 1 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating >= 2 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating >= 3 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating >= 4 ? '-fill' : '' }} cursor-pointer"></i>
+                    <i class="ms-1 bi bi-star{{ t.rating >= 5 ? '-fill' : '' }} cursor-pointer"></i>
                   </div>
                 </td>
             </tr>
@@ -66,14 +66,14 @@
 <ng-template #modalCloseTicket let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Fechar Chamado</h4>
-    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+    <button type="button" class="close btn btn-info" aria-label="Close" (click)="exitModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="mb-3">
       <label for="description" class="form-label">Descrição</label>
-      <textarea class="form-control" id="description" rows="3" [(ngModel)]="descriptionClosing"></textarea>
+      <textarea class="form-control" id="description" rows="3" [(ngModel)]="closingDescription"></textarea>
     </div>
     <div class="text-end">
       <button type="button" class="btn btn-primary m-1" (click)="confirmClosing()">Confirmar</button>
@@ -84,7 +84,7 @@
 <ng-template #modalRating let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Avaliar Chamado</h4>
-    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+    <button type="button" class="close btn btn-info" aria-label="Close" (click)="exitModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -100,7 +100,7 @@
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Deixe sua opinião</label>
-      <textarea class="form-control" id="description" rows="3" [(ngModel)]="descriptionRating"></textarea>
+      <textarea class="form-control" id="description" rows="3" [(ngModel)]="ratingDescription"></textarea>
     </div>
     <div class="text-end">
       <button type="button" class="btn btn-primary m-1" (click)="confirmRating()">Confirmar</button>
@@ -111,7 +111,7 @@
 <ng-template #modalNewTicket let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Avaliar Chamado</h4>
-    <button type="button" class="close" aria-label="Close" (click)="exitModal()">
+    <button type="button" class="close btn btn-info" aria-label="Close" (click)="exitModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -132,35 +132,38 @@
 </ng-template>
 <ng-template #modalConsultingTicket let-modal>
   <div class="modal-header">
-    <h4 class="modal-title">Consulta de Chamado</h4>
+    <h4 class="modal-title">Consulta de Chamado - Nº {{idTicket}}</h4>
+
     <button type="button" class="close" aria-label="Close" (click)="exitModal()">
       <span aria-hidden="true">&times;</span>
     </button>
+
   </div>
   <div class="modal-body">
     <div class="mb-3">    
       <label for="subject" class="form-label">Assunto</label>
-      <input type="text" class="form-control" id="subject" [(ngModel)]="subject">
+      <input type="text" class="form-control" id="subject" [(ngModel)]="subject" readonly>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Descrição</label>
-      <textarea class="form-control" id="description" rows="2" [(ngModel)]="description"></textarea>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="description" readonly></textarea>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Resolução</label>
-      <textarea class="form-control" id="description" rows="2" [(ngModel)]="descriptionClosing"></textarea>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="closingDescription" readonly></textarea>
     </div>
     <div class="mb-3 text-center">
-      <ngb-rating [(rate)]="rating">
-        <ng-template let-fill="fill" let-index="index">
-          <i class="rating bi-star{{ fill === 100 ? '-fill' : '' }}" [class.filled]="fill === 100" [class.low]="index < 3"></i>
-        </ng-template>
-      </ngb-rating>
+      <div>
+        <i class="ms-1 bi bi-star{{ rating >= 1 ? '-fill' : '' }} cursor-pointer"></i>
+        <i class="ms-1 bi bi-star{{ rating >= 2 ? '-fill' : '' }} cursor-pointer"></i>
+        <i class="ms-1 bi bi-star{{ rating >= 3 ? '-fill' : '' }} cursor-pointer"></i>
+        <i class="ms-1 bi bi-star{{ rating >= 4 ? '-fill' : '' }} cursor-pointer"></i>
+        <i class="ms-1 bi bi-star{{ rating >= 5 ? '-fill' : '' }} cursor-pointer"></i>
+      </div>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Comentário da Avaliação</label>
-      <textarea class="form-control" id="description" rows="2" [(ngModel)]="descriptionRating"></textarea>
+      <textarea class="form-control" id="description" rows="2" [(ngModel)]="ratingDescription" readonly></textarea>
     </div>
   </div>
 </ng-template>
-
