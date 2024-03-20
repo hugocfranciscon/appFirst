@@ -51,7 +51,7 @@ public class TicketsService {
         Tickets ticket = ticketRepository.findById(ticketId).orElse(null);
         Users user = userRepository.findById(userId).orElse(null);
         
-        ticket.updateClosing(user, closingDescription);
+        ticket.updateClosing(user, closingDescription, "CLOSE");
         return ticketRepository.save(ticket);
     }
 }

@@ -19,7 +19,7 @@ export class TicketsComponent implements OnInit {
   
   public ticketSelected: any = {};
   public tickets: any = [];
-  public typeUser: string = "A";
+  public typeUser: string = "I";
   public loading: boolean = false;
   public page: number = 1;
   public pageSize: number = 10;
@@ -44,7 +44,7 @@ export class TicketsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.typeUser = window.sessionStorage.getItem('typeUser')!;
+    this.typeUser = window.sessionStorage.getItem('type')!;
     this.loadTickets();
   }
 
@@ -59,14 +59,15 @@ export class TicketsComponent implements OnInit {
       return;
     }
     this.removeCredentials();
-  }
-
-  
+  }  
 
   loadTickets() {
     const userId = sessionStorage.getItem('userId');
-    const filter = encodeURIComponent(this.filter);
-    const url = `${environment.url}api/tickets/findTickets?userId=${userId}&page=${this.page}&size=${this.pageSize}&filter=${filter}`;
+    const filter = encodeURIComponent(this.filter);    
+    let url = `${environment.url}api/tickets/findTickets?userId=${userId}&page=${this.page-1}&size=${this.pageSize}&filter=${filter}`;
+    if (this.typeUser == "A") {
+      url = `${environment.url}api/tickets/findTickets?page=${this.page-1}&size=${this.pageSize}&filter=${filter}`;
+    }
     this.http.get(url).subscribe({
       next: (response: any) => {        
         this.tickets = response.content;

@@ -31,7 +31,7 @@ public class Tickets {
     private String description;
 
     @Column(nullable = false)
-    private String status = "OPEN";
+    private String status;
     
     private int rating;
     
@@ -50,9 +50,10 @@ public class Tickets {
         this.ratingDescription = ratingDescription;
     }
     
-    public void updateClosing(Users user, String closingDescription) {
+    public void updateClosing(Users user, String closingDescription, String status) {
         this.closingUser = user;
         this.closingDescription = closingDescription;
+        this.status = status;
     }
     
 }
